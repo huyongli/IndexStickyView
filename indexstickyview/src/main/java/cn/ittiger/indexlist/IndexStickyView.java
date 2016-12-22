@@ -3,6 +3,7 @@ package cn.ittiger.indexlist;
 import cn.ittiger.indexlist.adapter.IndexHeaderFooterAdapter;
 import cn.ittiger.indexlist.adapter.IndexStickyViewAdapter;
 import cn.ittiger.indexlist.entity.IndexStickyEntity;
+import cn.ittiger.indexstickyview.R;
 
 import android.content.Context;
 import android.content.res.TypedArray;
