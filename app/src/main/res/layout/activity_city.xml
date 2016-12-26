@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorAccent"
+        android:minHeight="?attr/actionBarSize"
+        android:subtitleTextColor="@android:color/white"
+        android:titleTextColor="@android:color/white"
+        app:contentInsetEnd="0dp"
+        app:contentInsetLeft="0dp"
+        app:contentInsetRight="0dp"
+        app:contentInsetStart="0dp"
+        app:paddingEnd="0dp"
+        app:paddingStart="0dp"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+    </android.support.v7.widget.Toolbar>
+
+    <cn.ittiger.indexlist.IndexStickyView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/indexStickyView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:sideBarBackgroundColor="@android:color/white"
+        app:sideBarFocusBackgroundColor="@android:color/holo_red_dark"
+        app:sideBarFocusTextColor="@android:color/white"
+        app:sideBarTextColor="@android:color/black"
+        app:sideBarTextSize="18sp"
+        app:sideBarTextSpace="4dp"
+        app:sideBarWidth="24dp">
+
+    </cn.ittiger.indexlist.IndexStickyView>
+</LinearLayout>
+

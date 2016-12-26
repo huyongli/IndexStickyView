@@ -24,11 +24,23 @@
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
     </android.support.v7.widget.Toolbar>
 
-    <cn.ittiger.indexlist.IndexStickyView
-        android:id="@+id/indexStickyView"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <Button
+            android:id="@+id/btnContact"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:text="联系人"/>
 
-    </cn.ittiger.indexlist.IndexStickyView>
+        <Button
+            android:id="@+id/btnCity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:text="城市列表"/>
+    </LinearLayout>
 </LinearLayout>
 
