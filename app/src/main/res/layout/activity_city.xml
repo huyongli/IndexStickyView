@@ -29,7 +29,7 @@
         android:id="@+id/indexStickyView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:sideBarBackgroundColor="@android:color/white"
+        app:sideBarBackgroundColor="@android:color/transparent"
         app:sideBarFocusBackgroundColor="@android:color/holo_red_dark"
         app:sideBarFocusTextColor="@android:color/white"
         app:sideBarTextColor="@android:color/black"

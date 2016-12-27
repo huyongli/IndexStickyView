@@ -20,13 +20,13 @@ import java.util.List;
  * 类似联系人的索引bar
  * Created by ylhu on 16-12-16.
  */
-public class SideBar extends View implements View.OnTouchListener {
+class SideBar extends View implements View.OnTouchListener {
     private static final int DEFAULT_TEXT_COLOR = Color.parseColor("#8c8c8c");//默认文字颜色
     private static final int DEFAULT_TEXT_SIZE = 14;//默认文字大小14sp
     private static final int DEFAULT_FOCUS_TEXT_COLOR = Color.WHITE;//默认选中时的文字颜色
     private static final int DEFAULT_FOCUS_BACKGROUND_COLOR = Color.parseColor("#f33737");//默认选中时的背景色
     private static final int DEFAULT_BAR_ITEM_SPACE = 4;//每隔bar item间的间隔，4dp
-    private static final int DEFAULT_BAR_BACKGROUND = Color.WHITE;//默认bar的背景色
+    private static final int DEFAULT_BAR_BACKGROUND = Color.TRANSPARENT;//默认bar的背景色
 
     /**
      * 计算出来的高度

@@ -85,8 +85,8 @@ public class IndexStickyView extends RelativeLayout implements SideBar.OnSideBar
 
     private void initViewAttrs(Context context, AttributeSet attrs) {
 
-        initSideBar(context, attrs);
         initRecyclerView(context);
+        initSideBar(context, attrs);
         initCenterOverlayView(context);
     }
 
@@ -101,7 +101,6 @@ public class IndexStickyView extends RelativeLayout implements SideBar.OnSideBar
                                 DEFAULT_SIDEBAR_WIDTH, getResources().getDisplayMetrics());
 
         mSideBar = new SideBar(context);
-        mSideBar.setId(R.id.indexStickyView_RecyclerView_id);
         mSideBar.setOnSideBarTouchListener(this);
         mSideBarWidth = defaultSideBarWidth;
         if(attrs != null) {
@@ -131,8 +130,6 @@ public class IndexStickyView extends RelativeLayout implements SideBar.OnSideBar
         mRecyclerView.addOnScrollListener(new RecyclerViewScrollListener());
 
         LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        layoutParams.addRule(LEFT_OF, mSideBar.getId());
-        layoutParams.addRule(ALIGN_PARENT_START);
         addView(mRecyclerView, layoutParams);
     }
 
@@ -305,8 +302,12 @@ public class IndexStickyView extends RelativeLayout implements SideBar.OnSideBar
             mStickyHeaderView.itemView.setVisibility(INVISIBLE);
             LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
             layoutParams.addRule(ALIGN_PARENT_TOP);
-            layoutParams.addRule(LEFT_OF, mSideBar.getId());
-            addView(mStickyHeaderView.itemView, layoutParams);
+            for(int i = 0; i < getChildCount(); i++) {
+                if(getChildAt(i) == mSideBar) {
+                    addView(mStickyHeaderView.itemView, i, layoutParams);
+                    break;
+                }
+            }
         }
     }
 
@@ -351,5 +352,10 @@ public class IndexStickyView extends RelativeLayout implements SideBar.OnSideBar
         List<String> indexValueList = (List<String>) data;
         mSideBar.setData(indexValueList);
         mLinearLayoutManager.scrollToPosition(0);
+    }
+
+    public int getSideBarWidth() {
+
+        return mSideBar.getWidth();
     }
 }
