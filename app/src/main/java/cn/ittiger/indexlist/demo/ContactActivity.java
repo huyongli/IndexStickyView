@@ -177,7 +177,7 @@ public class ContactActivity extends AppCompatActivity implements
 
 
         //添加一个底部自定义列表
-        IndexHeaderFooterAdapter<UserEntity> footerAdapter = new IndexHeaderFooterAdapter<UserEntity>("尾", "Footer", initFavDatas()) {
+        IndexHeaderFooterAdapter<UserEntity> footerAdapter = new IndexHeaderFooterAdapter<UserEntity>("$", "Footer", initFavDatas()) {
             @Override
             public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent) {
 

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="global_divider_size">1px</dimen>
+    <dimen name="contact_item_left_margin">10dp</dimen>
+    <dimen name="contact_item_right_margin">24dp</dimen>
+</resources>

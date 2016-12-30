@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
-              android:layout_height="wrap_content">
+              android:layout_height="wrap_content"
+    android:background="#e6e6e6">
     <TextView
         android:id="@+id/tv_index"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#ADADAD"
         android:paddingBottom="8dp"
         android:paddingLeft="24dp"
         android:paddingTop="8dp"
-        android:textColor="@color/colorPrimary"
-        android:textStyle="bold"
+        android:textColor="#8a8a8a"
         android:textSize="14sp" />
 </FrameLayout>

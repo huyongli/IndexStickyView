@@ -32,8 +32,8 @@
         app:sideBarBackgroundColor="@android:color/transparent"
         app:sideBarFocusBackgroundColor="@android:color/holo_red_dark"
         app:sideBarFocusTextColor="@android:color/white"
-        app:sideBarTextColor="@android:color/black"
-        app:sideBarTextSize="18sp"
+        app:sideBarTextColor="#8a8a8a"
+        app:sideBarTextSize="14sp"
         app:sideBarTextSpace="4dp"
         app:sideBarWidth="24dp">
 

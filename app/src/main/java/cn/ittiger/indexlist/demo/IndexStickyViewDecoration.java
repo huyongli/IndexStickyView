@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -17,26 +18,28 @@ import android.view.View;
  */
 public class IndexStickyViewDecoration extends RecyclerView.ItemDecoration {
 
-    private Drawable mDivider;
-    private int mOrientation;
-    //我们通过获取系统属性中的listDivider来添加，在系统中的AppTheme中设置
-    public static final int[] ATRRS  = new int[]{
-            android.R.attr.listDivider
-    };
+    private final Drawable mDivider;
+    private final int mSize;
+    private final int mLeftMargin;
+    private final int mRightMargin;
 
     public IndexStickyViewDecoration(Context context) {
 
-        final TypedArray ta = context.obtainStyledAttributes(ATRRS);
-        this.mDivider = ta.getDrawable(0);
+        mDivider = new ColorDrawable(context.getResources().getColor(R.color.divider_color));
+        mSize = context.getResources().getDimensionPixelSize(R.dimen.global_divider_size);
+        mLeftMargin = context.getResources().getDimensionPixelSize(R.dimen.contact_item_left_margin);
+        mRightMargin = context.getResources().getDimensionPixelSize(R.dimen.contact_item_right_margin);
     }
 
     @Override
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
 
         int position = parent.getChildAdapterPosition(view);
-        IndexStickyEntity entity = ((IndexStickyViewAdapter)parent.getAdapter()).getItem(position);
-        if(entity.getItemType() != ItemType.ITEM_TYPE_INDEX && position != 0) {
-            outRect.set(0, 0, 0, mDivider.getIntrinsicHeight());
+        IndexStickyViewAdapter adapter = (IndexStickyViewAdapter)parent.getAdapter();
+        IndexStickyEntity entity = adapter.getItem(position);
+        if(entity.getItemType() != ItemType.ITEM_TYPE_INDEX && position < (adapter.getItemCount() - 1)
+                && adapter.getItem(position + 1).getItemType() != ItemType.ITEM_TYPE_INDEX) {
+            outRect.set(0, 0, 0, mSize);
         }
     }
 
@@ -44,22 +47,27 @@ public class IndexStickyViewDecoration extends RecyclerView.ItemDecoration {
     public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
 
         super.onDraw(c, parent, state);
-        int left = parent.getPaddingLeft();
-        int right = parent.getWidth() - parent.getPaddingRight();
+        int top;
+        int bottom;
+        int left = parent.getPaddingLeft() + mLeftMargin;
+        int right = parent.getWidth() - parent.getPaddingRight() - mRightMargin;
         final int childCount = parent.getChildCount();
-        for (int i = 0; i < childCount; i++){
+        IndexStickyViewAdapter adapter = (IndexStickyViewAdapter)parent.getAdapter();
+        IndexStickyEntity entity;
+        for (int i = 0; i < childCount; i++) {
             final View child = parent.getChildAt(i);
             int position = parent.getChildAdapterPosition(child);
-            IndexStickyEntity entity = ((IndexStickyViewAdapter)parent.getAdapter()).getItem(position);
-            if(entity.getItemType() != ItemType.ITEM_TYPE_INDEX && position != 0) {
+            entity = adapter.getItem(position);
+            if(entity.getItemType() != ItemType.ITEM_TYPE_INDEX &&
+                    position < (adapter.getItemCount() - 1) &&
+                    adapter.getItem(position + 1).getItemType() != ItemType.ITEM_TYPE_INDEX) {
                 //获得child的布局信息
                 final RecyclerView.LayoutParams params = (RecyclerView.LayoutParams)child.getLayoutParams();
-                final int top = child.getBottom() + params.bottomMargin;
-                final int bottom = top + mDivider.getIntrinsicHeight();
+                top = child.getBottom() + params.bottomMargin;
+                bottom = top + mSize;
                 mDivider.setBounds(left, top, right, bottom);
                 mDivider.draw(c);
             }
-
         }
     }
 }

@@ -149,7 +149,6 @@ public class CityActivity extends AppCompatActivity implements OnItemClickListen
 
             IndexViewHolder indexViewHolder = (IndexViewHolder) holder;
             indexViewHolder.mTextView.setText(indexName);
-            indexViewHolder.mTextView.setTextColor(Color.RED);
         }
 
         @Override
