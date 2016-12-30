@@ -25,8 +25,11 @@ public class ConvertHelper {
     public static final String INDEX_SPECIAL = "#";
 
     public static class ConvertResult<T> {
+        //转换后得到的实际展示数据列表，包括联系人数据+组名称数据(索引名称)
         private List<IndexStickyEntity<T>> mIndexStickyEntities = new ArrayList<>();
+        //索引条中展示的数据列表
         private List<String> mIndexValueList = new ArrayList<>();
+        //索引条中展示数据与对应组在列表中位置索引的一一映射
         private Map<String, Integer> mIndexValuePositionMap = new HashMap<>();
 
         public List<IndexStickyEntity<T>> getIndexStickyEntities() {
@@ -49,6 +52,7 @@ public class ConvertHelper {
 
         ConvertResult<T> convertResult = new ConvertResult<T>();
 
+        //使用TreeMap自动按照Key(字母索引值)进行排序
         TreeMap<String, List<IndexStickyEntity<T>>> treeMap = new TreeMap<>(ComparatorFactory.indexValueComparator());
         for(int i = 0; i < list.size(); i++) {
             IndexStickyEntity<T> entity = originalEntityToIndexEntity(list.get(i));

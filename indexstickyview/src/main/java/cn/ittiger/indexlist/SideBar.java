@@ -172,11 +172,12 @@ class SideBar extends View implements View.OnTouchListener {
 
         int height = MeasureSpec.getSize(heightMeasureSpec);
         if (mValueList.size() > 0) {
+            //计算SideBar的实际高度
             mCalViewHeight = (int) (((mValueList.size() - 1) * mTextPaint.getTextSize() + mFocusTextPaint.getTextSize())
                     + (mValueList.size() + 1) * mTextSpace);
         }
 
-        if (mCalViewHeight > height) {
+        if (mCalViewHeight > height) {//实际高度超过可用高度
             mCalViewHeight = height;
         }
 
@@ -190,12 +191,14 @@ class SideBar extends View implements View.OnTouchListener {
         if(mValueList.size() == 0) {
             return;
         }
+        //计算每项的高度
         mItemHeight = ((float) getHeight()) / mValueList.size();
 
         //关于文字居中参考：http://www.jianshu.com/p/c2b720fa5877和http://blog.csdn.net/zly921112/article/details/50401976
-        float radius = Math.min(getWidth() / 2, mItemHeight / 2);
+        float radius = Math.min(getWidth() / 2, mItemHeight / 2);//选中状态时圆形背景半径
         for(int i = 0; i < mValueList.size(); i++) {
             if(mSelectPosition == i) {
+                //计算文本垂直居中的基准线
                 float baseline = mItemHeight / 2 + (mFocusTextPaint.getFontMetrics().descent - mFocusTextPaint.getFontMetrics().ascent) / 2
                         - mFocusTextPaint.getFontMetrics().descent;
                 canvas.drawCircle(getWidth() / 2, mItemHeight / 2 + mItemHeight * i, radius, mFocusTextBgPaint);
@@ -229,6 +232,11 @@ class SideBar extends View implements View.OnTouchListener {
         return true;
     }
 
+    /**
+     * 根据点击的y坐标计算得到当前选中的是哪个选项
+     * @param pointY
+     * @return      没选中则返回-1
+     */
     private int getPositionForPointY(float pointY) {
 
         if(mValueList.size() <= 0) {
