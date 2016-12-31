@@ -5,14 +5,13 @@
 4. 支持添加自定义`Header`或`Footer`不同类型的`View`
 5. 支持`ItemClick`和`ItemLongClick`事件
 
-# Demo
-典型示例为联系人列表和城市列表展示
+# 效果Gif
 ![](gif/contact.gif)
 
 # 使用
 ### gradle
 在项目的`build.gradle`文件中添加如下依赖
-`compile 'cn.ittiger:indexstickyview:1.0.0'`
+`compile 'cn.ittiger:indexstickyview:1.0.1'`
 
 ### xml布局
 ```xml
