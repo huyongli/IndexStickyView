@@ -6,7 +6,6 @@
 5. 支持`ItemClick`和`ItemLongClick`事件
 
 # 效果Gif
-![](gif/contact.gif)
 <img src="gif/contact.gif" width = "360" height = "640" alt="图片名称" align=center />
 
 # 使用
