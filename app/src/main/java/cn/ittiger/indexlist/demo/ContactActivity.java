@@ -14,6 +14,7 @@ import cn.ittiger.indexlist.listener.OnItemLongClickListener;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -38,6 +39,8 @@ public class ContactActivity extends AppCompatActivity implements
         Toolbar.OnMenuItemClickListener, OnItemClickListener<ContactEntity>, OnItemLongClickListener<ContactEntity> {
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
+    @BindView(R.id.swipeRefreshLayout)
+    SwipeRefreshLayout mRefreshLayout;
     @BindView(R.id.indexStickyView)
     IndexStickyView mIndexStickyView;
     MyIndexStickyViewAdapter mAdapter;
@@ -54,6 +57,12 @@ public class ContactActivity extends AppCompatActivity implements
         getSupportActionBar().setTitle("联系人列表");
         mToolbar.setOnMenuItemClickListener(this);
 
+        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+            }
+        });
 
         mAdapter = new MyIndexStickyViewAdapter(initDatas());
         mIndexStickyView.setAdapter(mAdapter);

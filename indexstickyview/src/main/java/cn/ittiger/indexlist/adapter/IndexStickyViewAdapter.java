@@ -234,6 +234,42 @@ public abstract class IndexStickyViewAdapter<T extends BaseEntity> extends Recyc
         refresh(-1);
     }
 
+    public final void removeAll() {
+
+        mOriginalList.clear();
+        refresh(-1);
+    }
+
+    public final void clear() {
+
+        mOriginalList.clear();
+
+    }
+
+    public final void clearHeader() {
+
+        if(mIndexHeaderAdapters.size() > 0) {
+            for(String indexValue : mIndexValuePositionMap.keySet()) {
+                mIndexValuePositionMap.remove(indexValue);
+            }
+            mIndexHeaderValuePositionMap.clear();
+
+            mIndexValueList.removeAll(mIndexHeaderValueList);
+            mIndexHeaderValueList.clear();
+
+            mIndexHeaderAdapters.clear();
+            mIndexHeaderList.clear();
+        }
+    }
+
+    public final void clearFooter() {
+
+        mIndexFooterAdapters.clear();
+        mIndexFooterList.clear();
+        mIndexFooterValueList.clear();
+        mIndexFooterValuePositionMap.clear();
+    }
+
     /**
      * 刷新数据列表
      * @param count

@@ -24,11 +24,15 @@
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
     </android.support.v7.widget.Toolbar>
 
-    <cn.ittiger.indexlist.IndexStickyView
-        android:id="@+id/indexStickyView"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-    </cn.ittiger.indexlist.IndexStickyView>
+        <cn.ittiger.indexlist.IndexStickyView
+            android:id="@+id/indexStickyView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </cn.ittiger.indexlist.IndexStickyView>
+    </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>
 
