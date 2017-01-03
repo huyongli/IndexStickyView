@@ -98,10 +98,8 @@ public class ConvertHelper {
         T item = originalEntity;
         String indexFieldName = item.getIndexField();
         String pinyin = PinYinHelper.getPingYin(indexFieldName);
-        String indexValue;
-        if(PinYinHelper.isLetter(pinyin)) {//首字符是否为字母
-            indexValue = pinyin.substring(0, 1).toUpperCase();
-        } else {//非字母以#代替
+        String indexValue = pinyin.substring(0, 1).toUpperCase();
+        if(!PinYinHelper.isLetter(indexValue)) {//首字符如果非字母以#代替
             indexValue = INDEX_SPECIAL;
         }
         entity.setPinYin(pinyin);

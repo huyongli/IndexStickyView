@@ -46,6 +46,13 @@ public class ContactActivity extends AppCompatActivity implements
     MyIndexStickyViewAdapter mAdapter;
     private Context mContext;
 
+    IndexHeaderFooterAdapter<UserEntity> mFavAdapter;
+    IndexHeaderFooterAdapter<MenuEntity> mMenuAdapter;
+    IndexHeaderFooterAdapter<UserEntity> mNormalAdapter;
+    IndexHeaderFooterAdapter mBannerAdapter;
+    IndexHeaderFooterAdapter<UserEntity> mFooterAdapter;
+    IndexHeaderFooterAdapter mFooterBannerAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -56,11 +63,19 @@ public class ContactActivity extends AppCompatActivity implements
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("联系人列表");
         mToolbar.setOnMenuItemClickListener(this);
+        initEditData();
 
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-
+                mRefreshLayout.setRefreshing(true);
+                mRefreshLayout.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mAdapter.reset(initDatas());
+                        mRefreshLayout.setRefreshing(false);
+                    }
+                }, 3000);
             }
         });
 
@@ -69,7 +84,7 @@ public class ContactActivity extends AppCompatActivity implements
         mIndexStickyView.addItemDecoration(new IndexStickyViewDecoration(this));
 
         //自定义添加头部收藏信息
-        IndexHeaderFooterAdapter<UserEntity> favAdapter = new IndexHeaderFooterAdapter<UserEntity>("☆", "我的收藏", initFavDatas()) {
+        mFavAdapter = new IndexHeaderFooterAdapter<UserEntity>("☆", "我的收藏", initFavDatas()) {
             @Override
             public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent) {
 
@@ -85,17 +100,17 @@ public class ContactActivity extends AppCompatActivity implements
                 contentViewHolder.mName.setText(itemData.getName());
             }
         };
-        favAdapter.setOnItemClickListener(new OnItemClickListener<UserEntity>() {
+        mFavAdapter.setOnItemClickListener(new OnItemClickListener<UserEntity>() {
             @Override
             public void onItemClick(View childView, int position, UserEntity item) {
                 Toast.makeText(mContext, "点击：" + item.getName() + ",位置：" + position, Toast.LENGTH_SHORT).show();
             }
         });
-        mIndexStickyView.addIndexHeaderAdapter(favAdapter);
+        mIndexStickyView.addIndexHeaderAdapter(mFavAdapter);
 
 
         //添加自定义头部菜单项
-        IndexHeaderFooterAdapter<MenuEntity> menuAdapter = new IndexHeaderFooterAdapter<MenuEntity>("↑", null, initMenuDatas()) {
+        mMenuAdapter = new IndexHeaderFooterAdapter<MenuEntity>("↑", null, initMenuDatas()) {
             @Override
             public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent) {
 
@@ -112,17 +127,17 @@ public class ContactActivity extends AppCompatActivity implements
                 contentViewHolder.mAvatar.setImageResource(itemData.getMenuIconRes());
             }
         };
-        menuAdapter.setOnItemLongClickListener(new OnItemLongClickListener<MenuEntity>() {
+        mMenuAdapter.setOnItemLongClickListener(new OnItemLongClickListener<MenuEntity>() {
             @Override
             public  void onItemLongClick(View childView, int position, MenuEntity item) {
                 Toast.makeText(mContext, "长按：" + item.getMenuTitle() + ",位置：" + position, Toast.LENGTH_SHORT).show();
             }
         });
-        mIndexStickyView.addIndexHeaderAdapter(menuAdapter);
+        mIndexStickyView.addIndexHeaderAdapter(mMenuAdapter);
 
         //添加一个长度为1的数据来作为普通视图的数据源
         UserEntity[] entitys = {new UserEntity("数据绑定普通HeaderView", "13312345654")};
-        IndexHeaderFooterAdapter<UserEntity> normalAdapter = new IndexHeaderFooterAdapter<UserEntity>(null, null, Arrays.asList(entitys)) {
+        mNormalAdapter = new IndexHeaderFooterAdapter<UserEntity>(null, null, Arrays.asList(entitys)) {
             @Override
             public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent) {
 
@@ -145,16 +160,16 @@ public class ContactActivity extends AppCompatActivity implements
                 }
             }
         };
-        normalAdapter.setOnItemClickListener(new OnItemClickListener<UserEntity>() {
+        mNormalAdapter.setOnItemClickListener(new OnItemClickListener<UserEntity>() {
             @Override
             public void onItemClick(View childView, int position, UserEntity item) {
                 Toast.makeText(mContext, "普通Header视图点击：" + item.getName() + ",位置：" + position, Toast.LENGTH_SHORT).show();
             }
         });
-        mIndexStickyView.addIndexHeaderAdapter(normalAdapter);
+        mIndexStickyView.addIndexHeaderAdapter(mNormalAdapter);
 
         //自定义添加一个图片作为头部普通视图
-        mIndexStickyView.addIndexHeaderAdapter(new IndexHeaderFooterAdapter() {
+        mBannerAdapter = new IndexHeaderFooterAdapter() {
             @Override
             public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent) {
 
@@ -182,11 +197,12 @@ public class ContactActivity extends AppCompatActivity implements
                     img = (ImageView) itemView.findViewById(R.id.img);
                 }
             }
-        });
+        };
+        mIndexStickyView.addIndexHeaderAdapter(mBannerAdapter);
 
 
         //添加一个底部自定义列表
-        IndexHeaderFooterAdapter<UserEntity> footerAdapter = new IndexHeaderFooterAdapter<UserEntity>("$", "Footer", initFavDatas()) {
+        mFooterAdapter = new IndexHeaderFooterAdapter<UserEntity>("$", "Footer", initFavDatas()) {
             @Override
             public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent) {
 
@@ -201,13 +217,45 @@ public class ContactActivity extends AppCompatActivity implements
                 contentViewHolder.mName.setText(itemData.getName());
             }
         };
-        footerAdapter.setOnItemClickListener(new OnItemClickListener<UserEntity>() {
+        mFooterAdapter.setOnItemClickListener(new OnItemClickListener<UserEntity>() {
             @Override
             public void onItemClick(View childView, int position, UserEntity item) {
                 Toast.makeText(mContext, "点击Footer：" + item.getName() + ",位置：" + position, Toast.LENGTH_SHORT).show();
             }
         });
-        mIndexStickyView.addIndexFooterAdapter(footerAdapter);
+        mIndexStickyView.addIndexFooterAdapter(mFooterAdapter);
+
+        //Footer Banner
+        mFooterBannerAdapter = new IndexHeaderFooterAdapter() {
+            @Override
+            public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent) {
+
+                View view = LayoutInflater.from(mContext).inflate(R.layout.indexsticky_header_contact_banner, parent, false);
+                ImageViewVH vh = new ImageViewVH(view);
+                vh.img.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(mContext, "Footer图片视图点击", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                return vh;
+            }
+
+            @Override
+            public void onBindViewHolder(RecyclerView.ViewHolder holder, int position, BaseEntity itemData) {
+
+            }
+
+            class ImageViewVH extends RecyclerView.ViewHolder {
+                ImageView img;
+
+                public ImageViewVH(View itemView) {
+                    super(itemView);
+                    img = (ImageView) itemView.findViewById(R.id.img);
+                }
+            }
+        };
+        mIndexStickyView.addIndexFooterAdapter(mFooterBannerAdapter);
 
 
         mAdapter.setOnItemClickListener(this);
@@ -323,13 +371,66 @@ public class ContactActivity extends AppCompatActivity implements
         return true;
     }
 
+    ContactEntity mAdd = new ContactEntity("阿圆add", "15525672987");
+    List<ContactEntity> mAddCollections = new ArrayList<>();
+    void initEditData() {
+
+        mAddCollections.add(new ContactEntity("阿圆add Collections1", "15525672987"));
+        mAddCollections.add(new ContactEntity("阿圆add Collections2", "15525672987"));
+    }
+
+
     @Override
     public boolean onMenuItemClick(MenuItem item) {
 
         switch (item.getItemId()) {
             case R.id.toolbar_add:
-                mAdapter.add(new ContactEntity("阿圆", "15525672987"));
+                mAdapter.add(mAdd);
                 Toast.makeText(mContext, "添加成功", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.toolbar_add_collections:
+                mAdapter.add(mAddCollections);
+                Toast.makeText(mContext, "添加成功", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.toolbar_del:
+                mAdapter.remove(mAdd);
+                Toast.makeText(mContext, "删除成功", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.toolbar_del_collections:
+                mAdapter.remove(mAddCollections);
+                Toast.makeText(mContext, "删除成功", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.toolbar_del_Banner_header:
+                mAdapter.removeHeader(mBannerAdapter);
+                Toast.makeText(mContext, "删除成功", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.toolbar_del_normal_header:
+                mAdapter.removeHeader(mNormalAdapter);
+                Toast.makeText(mContext, "删除成功", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.toolbar_del_all_header:
+                mAdapter.removeAllHeader();
+                Toast.makeText(mContext, "删除成功", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.toolbar_del_banner_footer:
+                mAdapter.removeFooter(mFooterBannerAdapter);
+                Toast.makeText(mContext, "删除成功", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.toolbar_del_normal_footer:
+                mAdapter.removeFooter(mFooterAdapter);
+                Toast.makeText(mContext, "删除成功", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.toolbar_del_all_footer:
+                mAdapter.removeAllFooter();
+                Toast.makeText(mContext, "删除成功", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.toolbar_clear:
+                mAdapter.clear();
+                Toast.makeText(mContext, "清除成功", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.toolbar_reset:
+                mAdapter.reset(initDatas());
+                Toast.makeText(mContext, "重置成功", Toast.LENGTH_SHORT).show();
                 break;
             default:
                 break;

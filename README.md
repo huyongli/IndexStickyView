@@ -4,6 +4,7 @@
 3. 支持自定义Bar的颜色样式
 4. 支持添加自定义`Header`或`Footer`不同类型的`View`
 5. 支持`ItemClick`和`ItemLongClick`事件
+6. 支持动态添加，删除数据和`Header`及`Footer`
 
 # 效果Gif
 <img src="gif/contact.gif" width = "360" height = "640" alt="图片名称" align=center />
@@ -11,7 +12,7 @@
 # 使用
 ### gradle
 在项目的`build.gradle`文件中添加如下依赖
-`compile 'cn.ittiger:indexstickyview:1.0.1'`
+`compile 'cn.ittiger:indexstickyview:1.1.0'`
 
 ### xml布局
 ```xml

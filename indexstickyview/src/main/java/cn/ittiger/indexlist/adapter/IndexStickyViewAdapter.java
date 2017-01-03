@@ -214,75 +214,6 @@ public abstract class IndexStickyViewAdapter<T extends BaseEntity> extends Recyc
         return mIndexValueList;
     }
 
-    /**------------- 动态添加数据 -----------------**/
-
-    public final void add(T originalEntity) {
-
-        mOriginalList.add(originalEntity);
-        refresh(1);
-    }
-
-    public final void add(List<T> originalList) {
-
-        mOriginalList.addAll(originalList);
-        refresh(originalList.size());
-    }
-
-    public final void remove(T originalEntity) {
-
-        mOriginalList.remove(originalEntity);
-        refresh(-1);
-    }
-
-    public final void removeAll() {
-
-        mOriginalList.clear();
-        refresh(-1);
-    }
-
-    public final void clear() {
-
-        mOriginalList.clear();
-
-    }
-
-    public final void clearHeader() {
-
-        if(mIndexHeaderAdapters.size() > 0) {
-            for(String indexValue : mIndexValuePositionMap.keySet()) {
-                mIndexValuePositionMap.remove(indexValue);
-            }
-            mIndexHeaderValuePositionMap.clear();
-
-            mIndexValueList.removeAll(mIndexHeaderValueList);
-            mIndexHeaderValueList.clear();
-
-            mIndexHeaderAdapters.clear();
-            mIndexHeaderList.clear();
-        }
-    }
-
-    public final void clearFooter() {
-
-        mIndexFooterAdapters.clear();
-        mIndexFooterList.clear();
-        mIndexFooterValueList.clear();
-        mIndexFooterValuePositionMap.clear();
-    }
-
-    /**
-     * 刷新数据列表
-     * @param count
-     */
-    private void refresh(int count) {
-
-        transferOriginalData();
-        addAllIndexHeaderAdapterData();
-        addAllIndexFooterAdapterData(count);
-        IndexValueBus.getInstance().notifyDataSetChanged(mIndexValueList);
-        notifyDataSetChanged();
-    }
-
     /**------------ 设置Header自定义索引数据项适配器 -------------------------**/
     public void addIndexHeaderAdapter(IndexHeaderFooterAdapter<T> indexHeaderAdapter) {
 
@@ -290,25 +221,18 @@ public abstract class IndexStickyViewAdapter<T extends BaseEntity> extends Recyc
             return;
         }
         //因为可能会添加多个Header，所以此处的ItemType按照Header个数进行变化
-        int itemType = ItemType.ITEM_TYPE_INDEX_HEADER + mIndexHeaderAdapters.size();
-        mIndexHeaderAdapters.put(itemType, indexHeaderAdapter);
+        indexHeaderAdapter.transfer(ItemType.ITEM_TYPE_INDEX_HEADER + mIndexHeaderAdapters.size());
 
-        //转换得到当前添加的Header数据
-        List<IndexStickyEntity<T>> entities = ConvertHelper.transferHeaderFooterData(indexHeaderAdapter, itemType);
+        mIndexHeaderAdapters.put(indexHeaderAdapter.getItemType(), indexHeaderAdapter);
 
-        IndexStickyEntity<T> indexEntity;
-        if(indexHeaderAdapter.isNormalView() == false && !TextUtils.isEmpty(indexHeaderAdapter.getIndexName())) {
-            //当前添加的Header为索引Header且要显示的索引标题不为空时才创建索引实体
-            indexEntity = ConvertHelper.createIndexEntity(indexHeaderAdapter.getIndexValue(), indexHeaderAdapter.getIndexName());
-            entities.add(0, indexEntity);
-        }
+        int entitySize = indexHeaderAdapter.getEntityList().size();
         //更新索引值与位置的映射
         for(String indexValue : mIndexValuePositionMap.keySet()) {
-            mIndexValuePositionMap.put(indexValue, mIndexValuePositionMap.get(indexValue) + entities.size());
+            mIndexValuePositionMap.put(indexValue, mIndexValuePositionMap.get(indexValue) + entitySize);
         }
         //更新之前添加的Header索引值与位置的映射
         for(String indexValue : mIndexHeaderValuePositionMap.keySet()) {
-            mIndexHeaderValuePositionMap.put(indexValue, mIndexHeaderValuePositionMap.get(indexValue) + entities.size());
+            mIndexHeaderValuePositionMap.put(indexValue, mIndexHeaderValuePositionMap.get(indexValue) + entitySize);
         }
         //如果当前添加的Header索引值不为空则添加该索引到索引列表中
         if(!TextUtils.isEmpty(indexHeaderAdapter.getIndexValue())) {
@@ -317,7 +241,7 @@ public abstract class IndexStickyViewAdapter<T extends BaseEntity> extends Recyc
             mIndexHeaderValueList.add(0, indexHeaderAdapter.getIndexValue());
             mIndexHeaderValuePositionMap.put(indexHeaderAdapter.getIndexValue(), 0);
         }
-        mIndexHeaderList.addAll(0, entities);
+        mIndexHeaderList.addAll(0, indexHeaderAdapter.getEntityList());
         notifyDataSetChanged();
     }
 
@@ -351,23 +275,16 @@ public abstract class IndexStickyViewAdapter<T extends BaseEntity> extends Recyc
         if(indexFooterAdapter == null) {
             return;
         }
-        int itemType = ItemType.ITEM_TYPE_INDEX_FOOTER + mIndexFooterAdapters.size();
-        mIndexFooterAdapters.put(itemType, indexFooterAdapter);
+        indexFooterAdapter.transfer(ItemType.ITEM_TYPE_INDEX_FOOTER + mIndexFooterAdapters.size());
+        mIndexFooterAdapters.put(indexFooterAdapter.getItemType(), indexFooterAdapter);
 
-        List<IndexStickyEntity<T>> entities = ConvertHelper.transferHeaderFooterData(indexFooterAdapter, itemType);
-
-        IndexStickyEntity<T> indexEntity = null;
-        if(indexFooterAdapter.isNormalView() == false && !TextUtils.isEmpty(indexFooterAdapter.getIndexName())) {
-            indexEntity = ConvertHelper.createIndexEntity(indexFooterAdapter.getIndexValue(), indexFooterAdapter.getIndexName());
-            entities.add(0, indexEntity);
-        }
         if(!TextUtils.isEmpty(indexFooterAdapter.getIndexValue())) {
             mIndexValueList.add(indexFooterAdapter.getIndexValue());
             mIndexValuePositionMap.put(indexFooterAdapter.getIndexValue(), getItemCount());
             mIndexFooterValueList.add(indexFooterAdapter.getIndexValue());
             mIndexFooterValuePositionMap.put(indexFooterAdapter.getIndexValue(), getItemCount());
         }
-        mIndexFooterList.addAll(entities);
+        mIndexFooterList.addAll(indexFooterAdapter.getEntityList());
         notifyDataSetChanged();
     }
 
@@ -394,6 +311,217 @@ public abstract class IndexStickyViewAdapter<T extends BaseEntity> extends Recyc
     private boolean isIndexFooterPosition(int position) {
 
         return position >= mList.size() + mIndexHeaderList.size();
+    }
+
+
+    /**------------- 动态添加数据 -----------------**/
+
+    public final void add(T originalEntity) {
+
+        mOriginalList.add(originalEntity);
+        refresh(1);
+    }
+
+    public final void add(List<T> originalList) {
+
+        mOriginalList.addAll(originalList);
+        refresh(originalList.size());
+    }
+
+    public final void reset(List<T> originalList) {
+
+        if(originalList == null) {
+            return;
+        }
+        int size = mOriginalList.size();
+        mOriginalList = originalList;
+        refresh(-size + originalList.size());
+    }
+
+    public final void remove(T originalEntity) {
+
+        mOriginalList.remove(originalEntity);
+        refresh(-1);
+    }
+
+    public final void remove(List<T> originalList) {
+
+        mOriginalList.removeAll(originalList);
+        refresh(-originalList.size());
+    }
+
+    /**
+     * 删除所有要显示的数据，不包括Header和Footer
+     */
+    public final void removeAll() {
+
+        int size = mOriginalList.size();
+        mOriginalList.clear();
+        refresh(-size);
+    }
+
+    /**
+     * 清空所有数据，包括Header和Footer
+     */
+    public final void clear() {
+
+        mOriginalList.clear();
+        removeAllFooter(false);
+        removeAllHeader(false);
+        refresh(0);
+    }
+
+    /**
+     * 删除所有Header数据
+     */
+    public final void removeAllHeader() {
+
+        removeAllHeader(true);
+    }
+
+    /**
+     * 移除某个Header
+     * @param adapter
+     */
+    public final void removeHeader(IndexHeaderFooterAdapter adapter) {
+
+        int idx = mIndexHeaderAdapters.indexOfKey(adapter.getItemType());//当前删除的是第几个Header
+        if(idx < 0) {
+            return;
+        }
+        if(!TextUtils.isEmpty(adapter.getIndexValue())) {//移除当前要删除的Header的索引位置映射关系
+            mIndexHeaderValuePositionMap.remove(adapter.getIndexValue());
+            mIndexValuePositionMap.remove(adapter.getIndexValue());
+
+            mIndexHeaderValueList.remove(adapter.getIndexValue());
+            mIndexValueList.remove(adapter.getIndexValue());
+        }
+        int size = adapter.getEntityList().size();
+        String indexValue;
+        for(int i = idx + 1; i < mIndexHeaderAdapters.size(); i++) {//更新其他Header的索引位置映射关系
+            indexValue = mIndexHeaderAdapters.valueAt(i).getIndexValue();
+            if(!TextUtils.isEmpty(indexValue)) {
+                int position = mIndexHeaderValuePositionMap.get(indexValue);
+                mIndexHeaderValuePositionMap.put(indexValue, position - size);
+            }
+        }
+        for(String key : mIndexFooterValuePositionMap.keySet()) {//更新Footer的索引位置映射关系
+            int position = mIndexFooterValuePositionMap.get(key);
+            mIndexFooterValuePositionMap.put(key, position - size);
+        }
+        for(String key : mIndexValuePositionMap.keySet()) {//更新所有数据的索引位置映射关系
+            int position = mIndexValuePositionMap.get(key) - size;
+            if(mIndexHeaderValuePositionMap.containsKey(key)) {
+                position = mIndexHeaderValuePositionMap.get(key);
+            } else if(mIndexFooterValuePositionMap.containsKey(key)) {
+                position = mIndexFooterValuePositionMap.get(key);
+            }
+            mIndexValuePositionMap.put(key, position);
+        }
+        mIndexHeaderList.removeAll(adapter.getEntityList());
+        mIndexHeaderAdapters.removeAt(idx);
+        IndexValueBus.getInstance().notifyDataSetChanged(mIndexValueList);
+        notifyDataSetChanged();
+    }
+
+    /**
+     * 删除所有Header数据
+     */
+    private void removeAllHeader(boolean isRefresh) {
+
+        if(mIndexHeaderAdapters.size() > 0) {
+            for(String indexValue : mIndexHeaderValuePositionMap.keySet()) {
+                mIndexValuePositionMap.remove(indexValue);
+            }
+            mIndexHeaderValuePositionMap.clear();
+
+            mIndexValueList.removeAll(mIndexHeaderValueList);
+            mIndexHeaderValueList.clear();
+
+            mIndexHeaderAdapters.clear();
+            mIndexHeaderList.clear();
+
+            if(isRefresh) {
+                refresh(0);
+            }
+        }
+    }
+
+    /**
+     * 删除所有Footer
+     */
+    public final void removeAllFooter() {
+
+        removeAllFooter(true);
+    }
+
+    /**
+     * 移除某个Footer
+     * @param adapter
+     */
+    public final void removeFooter(IndexHeaderFooterAdapter adapter) {
+
+        int idx = mIndexFooterAdapters.indexOfKey(adapter.getItemType());//当前删除的是第几个Footer
+        if(idx < 0) {
+            return;
+        }
+        if(!TextUtils.isEmpty(adapter.getIndexValue())) {//移除当前要删除的Footer的索引位置映射关系
+            mIndexFooterValuePositionMap.remove(adapter.getIndexValue());
+            mIndexValuePositionMap.remove(adapter.getIndexValue());
+
+            mIndexFooterValueList.remove(adapter.getIndexValue());
+            mIndexValueList.remove(adapter.getIndexValue());
+        }
+        int size = adapter.getEntityList().size();
+        String indexValue;
+        for(int i = idx + 1; i < mIndexFooterAdapters.size(); i++) {//更新其他Footer的索引位置映射关系
+            indexValue = mIndexFooterAdapters.valueAt(i).getIndexValue();
+            if(!TextUtils.isEmpty(indexValue)) {
+                int position = mIndexFooterValuePositionMap.get(indexValue);
+                mIndexFooterValuePositionMap.put(indexValue, position - size);
+                mIndexValuePositionMap.put(indexValue, position - size);
+            }
+        }
+        mIndexFooterList.removeAll(adapter.getEntityList());
+        mIndexFooterAdapters.removeAt(idx);
+        IndexValueBus.getInstance().notifyDataSetChanged(mIndexValueList);
+        notifyDataSetChanged();
+    }
+
+    /**
+     * 删除所有Footer
+     */
+    private final void removeAllFooter(boolean isRefresh) {
+
+        if(mIndexHeaderAdapters.size() > 0) {
+            for(String indexValue : mIndexFooterValuePositionMap.keySet()) {
+                mIndexValuePositionMap.remove(indexValue);
+            }
+            mIndexFooterValuePositionMap.clear();
+
+            mIndexValueList.removeAll(mIndexFooterValueList);
+            mIndexHeaderValueList.clear();
+
+            mIndexFooterAdapters.clear();
+            mIndexFooterList.clear();
+
+            if(isRefresh) {
+                refresh(0);
+            }
+        }
+    }
+
+    /**
+     * 刷新数据列表
+     * @param count
+     */
+    private void refresh(int count) {
+
+        transferOriginalData();
+        addAllIndexHeaderAdapterData();
+        addAllIndexFooterAdapterData(count);
+        IndexValueBus.getInstance().notifyDataSetChanged(mIndexValueList);
+        notifyDataSetChanged();
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
