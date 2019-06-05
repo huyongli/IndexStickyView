@@ -6,6 +6,10 @@
 5. 支持`ItemClick`和`ItemLongClick`事件
 6. 支持动态添加，删除数据和`Header`及`Footer`
 
+
+### 个人微信公众号，欢迎扫码关注交流：   
+![](https://img-blog.csdnimg.cn/2019052410035231.jpg)
+
 # 效果Gif
 <img src="gif/contact.gif" width = "360" height = "640" alt="图片名称" align=center />
 
